@@ -26,37 +26,27 @@ To install Wine: use SpilledWine 0.5 to install Wine on Termux.
 
 #!/bin/sh
 
-# Log file
 LOGFILE="/data/data/com.termux/files/home/setup_spilled_wine.log"
 
-# Function to log messages
 log_message() {
     echo "$(date) - $1" >> $LOGFILE
 }
-
-# Display README.txt and wait for user input
 log_message "Displaying README.txt and waiting for user input..."
 cat /data/data/com.termux/files/home/README.txt
 echo "Press Enter to continue..."
 read -r
-
-# Update and upgrade
 log_message "Updating and upgrading packages..."
 pkg update && pkg upgrade -y >> $LOGFILE 2>&1
 if [ $? -ne 0 ]; then
     log_message "Failed to update and upgrade packages."
     exit 1
 fi
-
-# Install necessary packages
 log_message "Installing required packages..."
 pkg install qemu-user-static gcc git cmake make termux-tools xorg-xhost lxde -y >> $LOGFILE 2>&1
 if [ $? -ne 0 ]; then
     log_message "Failed to install required packages."
     exit 1
 fi
-
-# Clone and build Box86
 log_message "Cloning Box86 repository..."
 git clone https://github.com/ptitSeb/box86 >> $LOGFILE 2>&1
 if [ $? -ne 0 ]; then
@@ -84,8 +74,6 @@ if [ $? -ne 0 ]; then
     log_message "Failed to install Box86."
     exit 1
 fi
-
-# Clone and build Box64
 log_message "Cloning Box64 repository..."
 git clone https://github.com/ptitSeb/box64 >> $LOGFILE 2>&1
 if [ $? -ne 0 ]; then
@@ -113,8 +101,6 @@ if [ $? -ne 0 ]; then
     log_message "Failed to install Box64."
     exit 1
 fi
-
-# Download and install prebuilt Wine
 log_message "Downloading prebuilt Wine..."
 wget https://github.com/AIOWinDev/spilledwine/raw/main/Wine-Builds-9.13.tar.gz -O /data/data/com.termux/files/home/wine.tar.gz >> $LOGFILE 2>&1
 if [ $? -ne 0 ]; then
@@ -128,62 +114,44 @@ if [ $? -ne 0 ]; then
     log_message "Failed to extract Wine."
     exit 1
 fi
-
-# Configure Wine
 log_message "Configuring Wine..."
 winecfg
-
-# Inform user
 log_message "Setup completed. Please start Termux-X11 or XServer XSDL and let them run in the background."
 echo "Setup completed. Please start Termux-X11 or XServer XSDL and let them run in the background."
 
 
-To install additional settings, use this script: #!/bin/sh
+To install additional settings, use this script: 
 
-# Log file
+
+#!/bin/sh
+
 LOGFILE="/data/data/com.termux/files/home/in_addons.log"
-
-# Function to log messages
 log_message() {
     echo "$(date) - $1" >> $LOGFILE
 }
-
-# Prompt user for installing extra settings
 echo "Would you like to install extra gaming settings? (y/n)"
 read -r response
 
 if [ "$response" = "y" ]; then
     echo "Proceeding with extra settings installation..."
-
-    # Install 7-Zip 9.20
     log_message "Installing 7-Zip 9.20..."
     wget https://www.7-zip.org/a/7z920.exe -O /data/data/com.termux/files/home/7z920.exe >> $LOGFILE 2>&1
     log_message "7-Zip downloaded."
-
-    # Extract and install 7-Zip
     log_message "Extracting and installing 7-Zip..."
     wine /data/data/com.termux/files/home/7z920.exe >> $LOGFILE 2>&1
     log_message "7-Zip installed."
-
-    # Install Wine Mono
     log_message "Installing Wine Mono..."
     wget https://dl.winehq.org/wine/wine-mono/8.0.0/wine-mono-8.0.0-x86.msi -O /data/data/com.termux/files/home/wine-mono.msi >> $LOGFILE 2>&1
     wine msiexec /i /data/data/com.termux/files/home/wine-mono.msi >> $LOGFILE 2>&1
     log_message "Wine Mono installed."
-
-    # Install Wine Gecko
     log_message "Installing Wine Gecko..."
     wget https://dl.winehq.org/wine/wine-gecko/2.47.0/wine-gecko-2.47.0-x86.msi -O /data/data/com.termux/files/home/wine-gecko.msi >> $LOGFILE 2>&1
     wine msiexec /i /data/data/com.termux/files/home/wine-gecko.msi >> $LOGFILE 2>&1
     log_message "Wine Gecko installed."
-
-    # Install DirectX
     log_message "Installing DirectX..."
     wget https://download.microsoft.com/download/1/7/4/1746C5F2-4E47-4697-B100-7A425BF9B3F4/directx_Jun2010_redist.exe -O /data/data/com.termux/files/home/directx_installer.exe >> $LOGFILE 2>&1
     wine /data/data/com.termux/files/home/directx_installer.exe >> $LOGFILE 2>&1
     log_message "DirectX installed."
-
-    # Install Visual C++ Redistributables
     log_message "Installing Visual C++ Redistributables..."
     wget https://download.microsoft.com/download/9/7/2/972B92E7-1F69-4B45-A8A0-7E6B546E6D85/vcredist_x86.exe -O /data/data/com.termux/files/home/vcredist_x86.exe >> $LOGFILE 2>&1
     wine /data/data/com.termux/files/home/vcredist_x86.exe >> $LOGFILE 2>&1
@@ -202,17 +170,12 @@ fi
 To start Wine, run this script: #!/bin/sh
 
 FILE_PATH=$1
-
-# Ensure that XServer XSDL or Termux-X11 is running
 if ! pgrep -x "XServer" > /dev/null && ! pgrep -x "xinit" > /dev/null; then
     echo "Please start XServer XSDL or Termux-X11 before running this script."
     exit 1
 fi
-
-# Set the DISPLAY environment variable to the X server
 export DISPLAY=:0
 
-# Run the Windows application using Wine
 wine "$FILE_PATH"
 
 
