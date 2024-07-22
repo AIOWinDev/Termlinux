@@ -36,7 +36,7 @@ cat /data/data/com.termux/files/home/README.txt
 echo "Press Enter to continue..."
 read -r
 log_message "Updating and upgrading packages..."
-pkg update && pkg upgrade -y >> $LOGFILE 2>&1
+pkg update && pkg upgrade -y >> $LOGFILE 2>1
 if [ $? -ne 0 ]; then
     log_message "Failed to update and upgrade packages."
     exit 1
